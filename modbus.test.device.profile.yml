@@ -1,0 +1,90 @@
+# Copyright 2019 IOTech Inc. All rights reserved.
+name: "Network Power Meter"
+manufacturer: "Dent Instruments"
+model: "PS3037"
+description: "Power Scout Meter"
+labels: 
+  - "modbus"
+  - "powerscout"
+deviceResources:
+    -
+        name: "flowrate"
+        description: "rate of water flow"
+        attributes:
+            { primaryTable: "HOLDING_REGISTERS", startingAddress: "990" }
+        properties:
+            value:
+                { type: "FLOAT32", readWrite: "R", size: "2", scale: "1", minimum: "0.0", maximum: "1000.0", defaultValue: "0"}
+            units:
+                { type: "String", readWrite: "R", defaultValue: "m3/s"}
+    -
+        name: "pH"
+        description: "pH of the water"
+        attributes:
+            { primaryTable: "HOLDING_REGISTERS", startingAddress: "1000" }
+        properties:
+            value:
+                { type: "FLOAT32", readWrite: "R", size: "2", scale: "1", minimum: "0.0", maximum: "14.0", defaultValue: "0"}
+            units:
+                { type: "String", readWrite: "R", defaultValue: ""}
+deviceCommands:
+    -
+        name: "Configuration"
+        set:
+            - { index: "1", operation: "set", object: "flowrate", parameter: "flowrate" }
+            - { index: "2", operation: "set", object: "pH", parameter: "pH" }
+        get:
+            - { index: "1", operation: "get", object: "flowrate", parameter: "flowrate" }
+            - { index: "2", operation: "get", object: "pH", parameter: "pH" }
+coreCommands:
+    -
+        name: "flowrate"
+        get: 
+            path: "/api/v1/device/{deviceId}/flowrate"
+            responses: 
+                - 
+                    code: "200"
+                    description: "Get the flowrate"
+                    expectedValues: ["flowrate"]
+                -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: []
+        put:
+            path: "/api/v1/device/{deviceId}/flowrate"
+            parameterNames: ["flowrate"]
+            responses:
+                -
+                    code: "204"
+                    description: "Set the flowrate"
+                    expectedValues: []
+                -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: []
+    -
+        name: "pH"
+        get: 
+            path: "/api/v1/device/{deviceId}/pH"
+            responses: 
+                - 
+                    code: "200"
+                    description: "Get the pH"
+                    expectedValues: ["pH"]
+                -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: []
+        put:
+            path: "/api/v1/device/{deviceId}/pH"
+            parameterNames: ["pH"]
+            responses:
+                -
+                    code: "204"
+                    description: "Set the pH"
+                    expectedValues: []
+                -
+                    code: "503"
+                    description: "service unavailable"
+                    expectedValues: []
+
